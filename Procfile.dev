@@ -1,0 +1,2 @@
+web: cd ./frontend && yarn dev
+server: cd ./backend && rails s -p 3000
