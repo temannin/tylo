@@ -10,7 +10,7 @@ class Api::BoardsController < ApplicationController
 
   # GET /boards/1
   def show
-    render json: @board
+    render json: @board.as_json(include: :buckets)
   end
 
   # POST /boards

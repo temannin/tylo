@@ -10,11 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_08_030543) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_08_160913) do
   create_table "boards", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
   end
 
+  create_table "buckets", force: :cascade do |t|
+    t.string "name"
+    t.integer "order"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "board_id", null: false
+    t.index ["board_id"], name: "index_buckets_on_board_id"
+  end
+
+  add_foreign_key "buckets", "boards"
 end

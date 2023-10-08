@@ -3,21 +3,21 @@ import {Board, IBoard} from "./Board.tsx";
 
 export default function App() {
 
-    const [boards, setBoards] = useState<number[]>([]);
+    const [board, setBoard] = useState<IBoard>();
 
     useEffect(() => {
-        async function loadBoards() {
-            const response = await fetch("/api/boards")
+        async function loadBuckets() {
+            const response = await fetch("/api/boards/1")
             if (!response.ok) return;
-            
-            let json: IBoard[] = await response.json();
-            setBoards(json.map((item) => item.id));
+
+            let json: IBoard = await response.json();
+            setBoard(json);
         }
 
-        loadBoards()
+        loadBuckets()
     }, [])
 
     return <>
-        <div className={"ml-2"}>{boards.map((item) => <Board key={item} id={item}></Board>)}</div>
+        <div className={"ml-2"}>{board ? <Board data={board}></Board> : null}</div>
     </>
 }
