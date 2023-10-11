@@ -10,7 +10,7 @@ class Api::BucketsController < ApplicationController
 
   # GET /buckets/1
   def show
-    render json: @bucket
+    render json: @bucket.as_json(include: :cards)
   end
 
   # POST /buckets
@@ -42,7 +42,7 @@ class Api::BucketsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_bucket
-    @bucket = Bucket.find(params[:id])
+    @bucket = Bucket.find_by(ident: params[:id])
   end
 
   # Only allow a list of trusted parameters through.

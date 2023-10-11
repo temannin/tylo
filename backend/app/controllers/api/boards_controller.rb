@@ -4,7 +4,6 @@ class Api::BoardsController < ApplicationController
   # GET /boards
   def index
     @boards = Board.all
-
     render json: @boards
   end
 
@@ -42,7 +41,7 @@ class Api::BoardsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_board
-    @board = Board.find(params[:id])
+    @board = Board.find_by(ident: params[:id])
   end
 
   # Only allow a list of trusted parameters through.

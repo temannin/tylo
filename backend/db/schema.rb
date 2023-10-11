@@ -10,11 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_08_160913) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_11_020342) do
   create_table "boards", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
+    t.string "ident", null: false
+    t.index ["ident"], name: "index_boards_on_ident", unique: true
   end
 
   create_table "buckets", force: :cascade do |t|
@@ -23,8 +25,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_08_160913) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "board_id", null: false
+    t.string "ident"
     t.index ["board_id"], name: "index_buckets_on_board_id"
+    t.index ["ident"], name: "index_buckets_on_ident", unique: true
+  end
+
+  create_table "cards", force: :cascade do |t|
+    t.string "title"
+    t.integer "bucket_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "ident", null: false
+    t.index ["bucket_id"], name: "index_cards_on_bucket_id"
   end
 
   add_foreign_key "buckets", "boards"
+  add_foreign_key "cards", "buckets"
 end

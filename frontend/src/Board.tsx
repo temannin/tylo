@@ -1,11 +1,11 @@
-import {Bucket} from "./Bucket.tsx";
+import {Bucket, IBucket} from "./Bucket.tsx";
 
 export interface IBoard {
     id: number;
     name: string;
     created_at: Date;
     updated_at: Date;
-    buckets: Bucket[];
+    buckets: IBucket[];
 }
 
 export function Board({data}: { data: IBoard }) {
@@ -13,7 +13,7 @@ export function Board({data}: { data: IBoard }) {
     return (
         <>
             {data.buckets?.map((item) => {
-                return <Bucket data={item}></Bucket>
+                return <Bucket key={item.ident} data={item}></Bucket>
             })}
         </>
     );

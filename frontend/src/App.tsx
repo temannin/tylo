@@ -7,7 +7,7 @@ export default function App() {
 
     useEffect(() => {
         async function loadBuckets() {
-            const response = await fetch("/api/boards/1")
+            const response = await fetch("/api/boards/0632827995c388107667")
             if (!response.ok) return;
 
             let json: IBoard = await response.json();
@@ -18,6 +18,6 @@ export default function App() {
     }, [])
 
     return <>
-        <div className={"ml-2"}>{board ? <Board data={board}></Board> : null}</div>
+        <div className={"ml-2 flex"}>{board ? <Board data={board}></Board> : null}</div>
     </>
 }
