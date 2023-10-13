@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_11_020342) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_11_154933) do
   create_table "boards", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -36,6 +36,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_11_020342) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "ident", null: false
+    t.string "description"
     t.index ["bucket_id"], name: "index_cards_on_bucket_id"
   end
 
