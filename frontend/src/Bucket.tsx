@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Card, ICard } from "./components/Card.tsx";
 import { getBucket } from "./utils/api.ts";
+import { SortableContext } from "@dnd-kit/sortable";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 
 export interface IBucket {
   id: number;
@@ -36,9 +38,34 @@ export function Bucket({ data }: { data: IBucket }) {
           <h1>{data.name}</h1>
         </div>
         <div className={"bg-white m-1 rounded p-1 h-[94%]"}>
-          {cards.map((item) => {
-            return <Card key={item.ident} data={item} />;
-          })}
+          <DndContext
+            onDragEnd={(event) => {
+              console.log(event);
+            }}
+          >
+            <SortableContext
+              items={cards.map((item) => {
+                return { id: item.ident };
+              })}
+            >
+              {cards.map((item) => {
+                return <Card key={item.ident} data={item} />;
+              })}
+            </SortableContext>
+            <DragOverlay>
+              <Card
+                data={{
+                  ident: "placeholder",
+                  id: 1,
+                  bucket_id: 1,
+                  title: "placeholder",
+                  description: "",
+                  created_at: new Date(),
+                  updated_at: new Date(),
+                }}
+              ></Card>
+            </DragOverlay>
+          </DndContext>
         </div>
       </div>
     </>

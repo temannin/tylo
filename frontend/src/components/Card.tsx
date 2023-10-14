@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { TextEditor } from "./TextEditor/TextEditor.tsx";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export interface ICard {
   id: number;
@@ -62,10 +64,24 @@ function ClosedCard({
   data: ICard;
   openState: IOpenState;
 }) {
+  const { transform, setNodeRef, attributes, listeners, transition } =
+    useSortable({
+      id: data.ident,
+    });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition: transition,
+  };
+
   return (
     <div
+      style={style}
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
       className="w-full border-2 rounded shadow p-2 mb-2 cursor-pointer hover:bg-gray-200"
-      onClick={() => openState.setOpen(true)}
+      // onClick={() => openState.setOpen(true)}
     >
       {data.title}
     </div>
