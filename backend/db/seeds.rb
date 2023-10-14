@@ -7,5 +7,14 @@
 #   Character.create(name: "Luke", movie: movies.first)
 
 board = Board.create({})
-bucket = board.buckets.create([{name: "Not Started"}, name: "In Progress"])
+board.ident = "0632827995c388107667"
+board.save
+
+bucket = Bucket.create([{ name: "Not Started", board_id: board.id }, { name: "In Progress", board_id: board.id }])
+bucket = bucket.first
+
+Card.create({ title: "Get routing working", bucket_id: bucket.id })
+Card.create({ title: "Lexical integration", bucket_id: bucket.id })
+Card.create({ title: "Authentication functionality", bucket_id: bucket.id })
+
 

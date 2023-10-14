@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Board < ApplicationRecord
   before_create :generate_ident
   has_many :buckets
