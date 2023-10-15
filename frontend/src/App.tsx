@@ -2,9 +2,15 @@ import { useEffect, useState } from "react";
 import { Board, IBoard } from "./Board.tsx";
 import { useParams } from "react-router-dom";
 
+import { useBoardStore } from "./utils/state.ts";
+import { useShallow } from "zustand/react/shallow";
+
 export default function App() {
   const { boardId } = useParams();
-  const [board, setBoard] = useState<IBoard>();
+
+  const board = useBoardStore(useShallow((state) => state.board));
+
+  const setBoard = useBoardStore(useShallow((state) => state.setBoard));
 
   useEffect(() => {
     async function loadBuckets() {

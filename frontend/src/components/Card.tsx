@@ -65,9 +65,7 @@ function ClosedCard({
   openState: IOpenState;
 }) {
   const { transform, setNodeRef, attributes, listeners, transition } =
-    useSortable({
-      id: data.ident,
-    });
+    useSortable({ id: data.ident });
 
   const style = {
     transform: CSS.Transform.toString(transform),

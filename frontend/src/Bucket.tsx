@@ -3,6 +3,8 @@ import { Card, ICard } from "./components/Card.tsx";
 import { getBucket } from "./utils/api.ts";
 import { SortableContext } from "@dnd-kit/sortable";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { useBoardStore } from "./utils/state.ts";
+import { useShallow } from "zustand/react/shallow";
 
 export interface IBucket {
   id: number;
@@ -15,18 +17,50 @@ export interface IBucket {
   cards: ICard[];
 }
 
-export function Bucket({ data }: { data: IBucket }) {
-  const [cards, setCards] = useState<ICard[]>([]);
+function findId(obj, targetId) {
+  // Base case: If the current object is null or undefined, return null
+  if (obj === null || typeof obj === "undefined") {
+    return null;
+  }
 
-  useEffect(() => {
-    async function loadCards() {
-      let response = await getBucket(data.ident);
-      let json: IBucket = await response.json();
-      setCards(json.cards);
+  // Check if the current object has an 'id' property and if it matches the targetId
+  if (obj.ident === targetId) {
+    return obj;
+  }
+
+  // If the current object is an array, search each element in the array
+  if (Array.isArray(obj)) {
+    for (let i = 0; i < obj.length; i++) {
+      const result = findId(obj[i], targetId);
+      if (result !== null) {
+        return result; // Found the target ID in the array
+      }
     }
+  }
 
-    loadCards();
-  }, [data.ident]);
+  // If the current object is an object, search its properties
+  if (typeof obj === "object") {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const result = findId(obj[key], targetId);
+        if (result !== null) {
+          return result; // Found the target ID in the object
+        }
+      }
+    }
+  }
+
+  return null; // Target ID not found in the current object
+}
+
+export function Bucket({ data }: { data: IBucket }) {
+  const [cards, setCards] = useState<ICard[]>(data.cards);
+  const active = useBoardStore(useShallow((state) => state.active));
+
+  const overlayData = (() => {
+    let boardState = useBoardStore.getState().board;
+    return findId(boardState, active);
+  })();
 
   return (
     <>
@@ -39,6 +73,9 @@ export function Bucket({ data }: { data: IBucket }) {
         </div>
         <div className={"bg-white m-1 rounded p-1 h-[94%]"}>
           <DndContext
+            onDragStart={(event) => {
+              useBoardStore.getState().setActive(event.active.id.toString());
+            }}
             onDragEnd={(event) => {
               console.log(event);
             }}
@@ -53,17 +90,7 @@ export function Bucket({ data }: { data: IBucket }) {
               })}
             </SortableContext>
             <DragOverlay>
-              <Card
-                data={{
-                  ident: "placeholder",
-                  id: 1,
-                  bucket_id: 1,
-                  title: "placeholder",
-                  description: "",
-                  created_at: new Date(),
-                  updated_at: new Date(),
-                }}
-              ></Card>
+              <Card data={overlayData}></Card>
             </DragOverlay>
           </DndContext>
         </div>

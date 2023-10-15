@@ -1,10 +1,10 @@
 import { Bucket, IBucket } from "./Bucket.tsx";
 
 export interface IBoard {
-  id: number;
-  name: string;
   created_at: Date;
   updated_at: Date;
+  name: null;
+  ident: string;
   buckets: IBucket[];
 }
 

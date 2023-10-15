@@ -1,27 +1,27 @@
 .editor-shell {
-    max-width: 100% !important;
-    margin: 10px auto !important;
+  max-width: 100% !important;
+  margin: 10px auto !important;
 }
 
 .toolbar button.toolbar-item i.format {
-    background-size: contain;
-    display: inline-block;
-    height: 18px;
-    width: 18px;
-    margin-top: 0px !important;
-    vertical-align: -0.25em;
-    display: flex;
-    opacity: 0.6;
+  background-size: contain;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  margin-top: 0px !important;
+  vertical-align: -0.25em;
+  display: flex;
+  opacity: 0.6;
 }
 
 .toolbar {
-    display: flex;
-    margin-bottom: 1px;
-    background: #fff;
-    padding: 4px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    vertical-align: middle;
-    overflow: auto;
-    height: 40px !important;
+  display: flex;
+  margin-bottom: 1px;
+  background: #fff;
+  padding: 4px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  vertical-align: middle;
+  overflow: auto;
+  height: 40px !important;
 }

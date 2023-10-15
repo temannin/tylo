@@ -1,5 +1,9 @@
+require "#{Rails.root}/lib/JSONUtils/helpers.rb"
+
+
 class Api::BoardsController < ApplicationController
   before_action :set_board, only: %i[ show update destroy ]
+  include JSONUtils
 
   # GET /boards
   def index
@@ -7,9 +11,8 @@ class Api::BoardsController < ApplicationController
     render json: @boards
   end
 
-  # GET /boards/1
   def show
-    render json: @board.as_json(include: :buckets)
+    render json: remove_id_property(@board.as_json(include: { buckets: { include: :cards } }))
   end
 
   # POST /boards
