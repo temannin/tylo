@@ -1,4 +1,4 @@
-module JSONUtils
+module JSONUtils::Helpers
   def remove_id_property(obj)
     if obj.is_a?(Hash)
       obj.each do |key, value|

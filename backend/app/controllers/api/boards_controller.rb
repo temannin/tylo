@@ -20,7 +20,7 @@ class Api::BoardsController < ApplicationController
     @board = Board.new(board_params)
 
     if @board.save
-      render json: @board, status: :created, location: @board
+      render json: @board, status: :created, location: api_boards_url(@board)
     else
       render json: @board.errors, status: :unprocessable_entity
     end
@@ -49,6 +49,6 @@ class Api::BoardsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def board_params
-    params.fetch(:board, {})
+    params.fetch(:board, {}).permit(:name)
   end
 end

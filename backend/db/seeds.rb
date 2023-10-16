@@ -11,10 +11,11 @@ board.ident = "0632827995c388107667"
 board.save
 
 bucket = Bucket.create([{ name: "Not Started", board_id: board.id }, { name: "In Progress", board_id: board.id }])
-bucket = bucket.first
+first_bucket = bucket.first
+second_bucket = bucket[1]
 
-Card.create({ title: "Get routing working", bucket_id: bucket.id })
-Card.create({ title: "Lexical integration", bucket_id: bucket.id })
-Card.create({ title: "Authentication functionality", bucket_id: bucket.id })
+Card.create({ title: "Get routing working", bucket_id: first_bucket.id })
+Card.create({ title: "Lexical integration", bucket_id: first_bucket.id })
+Card.create({ title: "Authentication functionality", bucket_id: second_bucket.id })
 
 

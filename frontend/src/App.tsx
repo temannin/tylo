@@ -9,7 +9,6 @@ export default function App() {
   const { boardId } = useParams();
 
   const board = useBoardStore(useShallow((state) => state.board));
-
   const setBoard = useBoardStore(useShallow((state) => state.setBoard));
 
   useEffect(() => {
@@ -22,6 +21,12 @@ export default function App() {
     }
 
     loadBuckets();
+  }, []);
+
+  useEffect(() => {
+    async function saveBoard() {}
+
+    saveBoard();
   }, []);
 
   return (

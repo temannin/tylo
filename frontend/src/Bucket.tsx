@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Card, ICard } from "./components/Card.tsx";
 import { getBucket } from "./utils/api.ts";
-import { SortableContext } from "@dnd-kit/sortable";
+import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { useBoardStore } from "./utils/state.ts";
 import { useShallow } from "zustand/react/shallow";
+import { useDebounce } from "./utils/hooks/useDebounce.ts";
+import { useIsFirstRender } from "./utils/hooks/useIsFirstRender.ts";
 
 export interface IBucket {
   id: number;
@@ -55,12 +57,24 @@ function findId(obj, targetId) {
 
 export function Bucket({ data }: { data: IBucket }) {
   const [cards, setCards] = useState<ICard[]>(data.cards);
+  const debouncedCards = useDebounce(cards, 1500);
   const active = useBoardStore(useShallow((state) => state.active));
+
+  const isFirstRender = useIsFirstRender();
+
+  useEffect(() => {
+    if (isFirstRender) return;
+    console.log(debouncedCards);
+  }, [debouncedCards]);
 
   const overlayData = (() => {
     let boardState = useBoardStore.getState().board;
     return findId(boardState, active);
   })();
+
+  const cardsById = cards.map((item) => {
+    return item.ident;
+  });
 
   return (
     <>
@@ -77,14 +91,16 @@ export function Bucket({ data }: { data: IBucket }) {
               useBoardStore.getState().setActive(event.active.id.toString());
             }}
             onDragEnd={(event) => {
+              const { active, over } = event;
+              const oldIndex = cardsById.indexOf(active.id as string);
+              const newIndex = cardsById.indexOf(over?.id as string);
+              setCards(arrayMove(cards, oldIndex, newIndex));
+            }}
+            onDragOver={(event) => {
               console.log(event);
             }}
           >
-            <SortableContext
-              items={cards.map((item) => {
-                return { id: item.ident };
-              })}
-            >
+            <SortableContext items={cardsById}>
               {cards.map((item) => {
                 return <Card key={item.ident} data={item} />;
               })}
