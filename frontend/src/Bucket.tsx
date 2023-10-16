@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { Card, ICard } from "./components/Card.tsx";
 import { getBucket } from "./utils/api.ts";
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import { DndContext, DragOverlay } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { useBoardStore } from "./utils/state.ts";
 import { useShallow } from "zustand/react/shallow";
 import { useDebounce } from "./utils/hooks/useDebounce.ts";
@@ -64,7 +70,6 @@ export function Bucket({ data }: { data: IBucket }) {
 
   useEffect(() => {
     if (isFirstRender) return;
-    console.log(debouncedCards);
   }, [debouncedCards]);
 
   const overlayData = (() => {
@@ -75,6 +80,14 @@ export function Bucket({ data }: { data: IBucket }) {
   const cardsById = cards.map((item) => {
     return item.ident;
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  );
 
   return (
     <>
@@ -87,6 +100,7 @@ export function Bucket({ data }: { data: IBucket }) {
         </div>
         <div className={"bg-white m-1 rounded p-1 h-[94%]"}>
           <DndContext
+            sensors={sensors}
             onDragStart={(event) => {
               useBoardStore.getState().setActive(event.active.id.toString());
             }}
