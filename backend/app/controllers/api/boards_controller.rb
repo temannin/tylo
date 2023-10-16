@@ -1,9 +1,8 @@
 require "#{Rails.root}/lib/JSONUtils/helpers.rb"
 
-
 class Api::BoardsController < ApplicationController
   before_action :set_board, only: %i[ show update destroy ]
-  include JSONUtils
+  include JSONUtils::Helpers
 
   # GET /boards
   def index
