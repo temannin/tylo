@@ -1,4 +1,4 @@
-require '/home/tyler/dev/tylo/backend/test/test_helper.rb'
+require '/home/tyler/dev/tylo/backend/test/test_helper.rb' # TODO: This is bad but it's the only way I can make the IDE work.
 
 class BoardsControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
