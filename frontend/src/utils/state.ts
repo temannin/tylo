@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { IBoard } from "../Board.tsx";
 
 interface BoardState {
-  board: IBoard;
+  board: IBoard | {};
   setBoard: (board: IBoard) => void;
   active: string;
   setActive: (by: string) => void;
@@ -10,7 +10,9 @@ interface BoardState {
 
 export const useBoardStore = create<BoardState>()((set) => ({
   board: {},
-  setBoard: (by) => set((state) => ({ board: by })),
+  setBoard: (by) => {
+    set(() => ({ board: by }));
+  },
   active: "",
-  setActive: (by) => set((state) => ({ active: by })),
+  setActive: (by) => set(() => ({ active: by })),
 }));

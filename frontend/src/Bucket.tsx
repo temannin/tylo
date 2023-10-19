@@ -1,18 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, ICard } from "./components/Card.tsx";
-import { getBucket } from "./utils/api.ts";
-import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { useBoardStore } from "./utils/state.ts";
-import { useShallow } from "zustand/react/shallow";
-import { useDebounce } from "./utils/hooks/useDebounce.ts";
-import { useIsFirstRender } from "./utils/hooks/useIsFirstRender.ts";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 
 export interface IBucket {
   id: number;
@@ -25,69 +13,16 @@ export interface IBucket {
   cards: ICard[];
 }
 
-function findId(obj, targetId) {
-  // Base case: If the current object is null or undefined, return null
-  if (obj === null || typeof obj === "undefined") {
-    return null;
-  }
-
-  // Check if the current object has an 'id' property and if it matches the targetId
-  if (obj.ident === targetId) {
-    return obj;
-  }
-
-  // If the current object is an array, search each element in the array
-  if (Array.isArray(obj)) {
-    for (let i = 0; i < obj.length; i++) {
-      const result = findId(obj[i], targetId);
-      if (result !== null) {
-        return result; // Found the target ID in the array
-      }
-    }
-  }
-
-  // If the current object is an object, search its properties
-  if (typeof obj === "object") {
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const result = findId(obj[key], targetId);
-        if (result !== null) {
-          return result; // Found the target ID in the object
-        }
-      }
-    }
-  }
-
-  return null; // Target ID not found in the current object
-}
-
 export function Bucket({ data }: { data: IBucket }) {
   const [cards, setCards] = useState<ICard[]>(data.cards);
-  const debouncedCards = useDebounce(cards, 1500);
-  const active = useBoardStore(useShallow((state) => state.active));
-
-  const isFirstRender = useIsFirstRender();
 
   useEffect(() => {
-    if (isFirstRender) return;
-  }, [debouncedCards]);
-
-  const overlayData = (() => {
-    let boardState = useBoardStore.getState().board;
-    return findId(boardState, active);
-  })();
+    setCards(data.cards);
+  }, [data.cards]);
 
   const cardsById = cards.map((item) => {
     return item.ident;
   });
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-  );
 
   return (
     <>
@@ -99,31 +34,29 @@ export function Bucket({ data }: { data: IBucket }) {
           <h1>{data.name}</h1>
         </div>
         <div className={"bg-white m-1 rounded p-1 h-[94%]"}>
-          <DndContext
-            sensors={sensors}
-            onDragStart={(event) => {
-              useBoardStore.getState().setActive(event.active.id.toString());
-            }}
-            onDragEnd={(event) => {
-              const { active, over } = event;
-              const oldIndex = cardsById.indexOf(active.id as string);
-              const newIndex = cardsById.indexOf(over?.id as string);
-              setCards(arrayMove(cards, oldIndex, newIndex));
-            }}
-            onDragOver={(event) => {
-              console.log(event);
-            }}
-          >
-            <SortableContext items={cardsById}>
-              {cards.map((item) => {
-                return <Card key={item.ident} data={item} />;
-              })}
-            </SortableContext>
-            <DragOverlay>
-              <Card data={overlayData}></Card>
-            </DragOverlay>
-          </DndContext>
+          <SortableContext items={cardsById}>
+            {cards.map((item) => {
+              return <Card key={item.ident} data={item} />;
+            })}
+          </SortableContext>
         </div>
+      </div>
+    </>
+  );
+}
+
+function DroppableContainer({ children, id }: { children: any; id: string }) {
+  const { attributes, listeners, setNodeRef } = useSortable({
+    id,
+    data: {
+      type: "container",
+    },
+  });
+  return (
+    <>
+      <div {...attributes} {...listeners} ref={setNodeRef}>
+        {id}
+        {children}
       </div>
     </>
   );

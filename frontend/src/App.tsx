@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Board, IBoard } from "./Board.tsx";
 import { useParams } from "react-router-dom";
 
@@ -21,12 +21,6 @@ export default function App() {
     }
 
     loadBuckets();
-  }, []);
-
-  useEffect(() => {
-    async function saveBoard() {}
-
-    saveBoard();
   }, []);
 
   return (
