@@ -6,7 +6,7 @@ import objectScan from "object-scan";
 export function isBelowOverItem(active: Active, over: Over | null): boolean {
   if (over === null) return false;
 
-  let offset = over.rect.height / 2 + 1;
+  let offset = over.rect.height / 2;
 
   console.log("The over is " + over.id + ", the active is " + active.id);
   console.log(
@@ -19,7 +19,7 @@ export function isBelowOverItem(active: Active, over: Over | null): boolean {
   const isBelowOverItem =
     over &&
     active.rect?.current.translated &&
-    active.rect.current.translated.top + offset <= over.rect.top;
+    active.rect.current.translated.top <= over.rect.top - offset;
 
   console.log(
     isBelowOverItem

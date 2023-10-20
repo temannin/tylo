@@ -64,12 +64,19 @@ function ClosedCard({
   data: ICard;
   openState: IOpenState;
 }) {
-  const { transform, setNodeRef, attributes, listeners, transition } =
-    useSortable({ id: data.ident });
+  const {
+    isDragging,
+    transform,
+    setNodeRef,
+    attributes,
+    listeners,
+    transition,
+  } = useSortable({ id: data.ident });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
@@ -81,7 +88,7 @@ function ClosedCard({
       className="w-full border-2 rounded shadow p-2 mb-2 cursor-pointer hover:bg-gray-200"
       onClick={() => openState.setOpen(true)}
     >
-      {data.ident}
+      {data.title}
     </div>
   );
 }

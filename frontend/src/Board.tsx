@@ -52,7 +52,6 @@ export function Board({ data }: { data: IBoard }) {
           useBoardStore.getState().setBoard(clonedBoard);
         }}
         onDragEnd={(event) => {
-          isBelowOverItem(event.active, event.over);
           setActive("");
         }}
       >
