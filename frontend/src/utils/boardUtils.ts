@@ -6,16 +6,33 @@ import objectScan from "object-scan";
 export function isBelowOverItem(active: Active, over: Over | null): boolean {
   if (over === null) return false;
 
+  let offset = over.rect.height / 2 + 1;
+
+  console.log("The over is " + over.id + ", the active is " + active.id);
+  console.log(
+    "OVER",
+    over.rect.top,
+    "ACTIVE",
+    active.rect.current.translated?.top + offset,
+  );
+
   const isBelowOverItem =
     over &&
     active.rect?.current.translated &&
-    active.rect?.current.translated.top < over.rect.top;
+    active.rect.current.translated.top + offset <= over.rect.top;
+
+  console.log(
+    isBelowOverItem
+      ? "The active is below the over item"
+      : "The active is NOT below the over item",
+  );
 
   if (isBelowOverItem === null || !isBelowOverItem) return false;
+
   return isBelowOverItem;
 }
 
-function getCard(
+export function getCard(
   board: IBoard,
   active: UniqueIdentifier,
   remove = false,
@@ -78,6 +95,7 @@ export function move(board: IBoard, event: DragOverEvent) {
       destinationArray.splice(index, 0, activeCard);
     }
 
+    console.log(destinationArray.map((item) => item.ident));
     return board;
   }
 }

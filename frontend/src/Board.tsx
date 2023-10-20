@@ -1,17 +1,20 @@
 import { Bucket, IBucket } from "./Bucket.tsx";
 import {
+  closestCorners,
   DndContext,
   DragOverlay,
   MeasuringStrategy,
   MouseSensor,
+  PointerSensor,
   TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { Card } from "./components/Card.tsx";
+import { Card, ICard } from "./components/Card.tsx";
 import { useShallow } from "zustand/react/shallow";
 import { useBoardStore } from "./utils/state.ts";
-import { move } from "./utils/boardUtils.ts";
+import { getCard, isBelowOverItem, move } from "./utils/boardUtils.ts";
+import { useState } from "react";
 
 export interface IBoard {
   created_at: Date;
@@ -25,19 +28,10 @@ export function Board({ data }: { data: IBoard }) {
   const [active, board, setActive] = useBoardStore(
     useShallow((state) => [state.active, state.board, state.setActive]),
   );
-  const sensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 200,
-        tolerance: 6,
-      },
-    }),
-  );
+
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const activeItem: ICard = getCard(board, active);
 
   return (
     <>
@@ -47,6 +41,7 @@ export function Board({ data }: { data: IBoard }) {
             strategy: MeasuringStrategy.Always,
           },
         }}
+        collisionDetection={closestCorners}
         sensors={sensors}
         onDragStart={(event) => {
           setActive(event.active.id.toString());
@@ -56,22 +51,18 @@ export function Board({ data }: { data: IBoard }) {
           move(clonedBoard, event);
           useBoardStore.getState().setBoard(clonedBoard);
         }}
+        onDragEnd={(event) => {
+          isBelowOverItem(event.active, event.over);
+          setActive("");
+        }}
       >
-        {data.buckets?.map((item) => {
-          return <Bucket key={item.ident} data={item}></Bucket>;
-        })}
+        <div style={{ userSelect: "none", display: "inline-flex" }}>
+          {data.buckets?.map((item) => {
+            return <Bucket key={item.ident} data={item}></Bucket>;
+          })}
+        </div>
         <DragOverlay>
-          <Card
-            data={{
-              id: 1,
-              title: "",
-              description: "",
-              created_at: new Date(),
-              updated_at: new Date(),
-              ident: "dfsdf",
-              bucket_id: 1,
-            }}
-          ></Card>
+          <Card data={activeItem}></Card>
         </DragOverlay>
       </DndContext>
     </>
