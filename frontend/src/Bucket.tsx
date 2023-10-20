@@ -35,9 +35,11 @@ export function Bucket({ data }: { data: IBucket }) {
         </div>
         <div className={"bg-white m-1 rounded p-1 h-[94%]"}>
           <SortableContext items={cardsById}>
-            {cards.map((item) => {
-              return <Card key={item.ident} data={item} />;
-            })}
+            <DroppableContainer id={data.ident}>
+              {cards.map((item) => {
+                return <Card key={item.ident} data={item} />;
+              })}
+            </DroppableContainer>
           </SortableContext>
         </div>
       </div>

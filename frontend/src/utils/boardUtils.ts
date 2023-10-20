@@ -1,108 +1,83 @@
+import { Active, DragOverEvent, Over, UniqueIdentifier } from "@dnd-kit/core";
 import { IBoard } from "../Board.tsx";
-import objectScan from "object-scan";
 import { ICard } from "../components/Card.tsx";
-import { IBucket } from "../Bucket.tsx";
-import { DragOverEvent, UniqueIdentifier } from "@dnd-kit/core";
-import { useBoardStore } from "./state.ts";
+import objectScan from "object-scan";
 
-function cardsAreInADifferentBucket(
+export function isBelowOverItem(active: Active, over: Over | null): boolean {
+  if (over === null) return false;
+
+  const isBelowOverItem =
+    over &&
+    active.rect?.current.translated &&
+    active.rect?.current.translated.top < over.rect.top;
+
+  if (isBelowOverItem === null || !isBelowOverItem) return false;
+  return isBelowOverItem;
+}
+
+function getCard(
   board: IBoard,
-  activeId: string,
-  overId: string,
-): boolean {
-  if (!identIsACard(board, activeId) || !identIsACard(board, overId)) return;
+  active: UniqueIdentifier,
+  remove = false,
+  selectors: string | string[] = "value",
+): any | undefined {
   let result = objectScan(["buckets[*].cards[*]"], {
-    filterFn: ({ value }) => {
-      return value.ident === activeId || value.ident === overId;
+    rtn: selectors,
+    filterFn: ({ parent, property, value }) => {
+      if (value.ident === (active as string)) {
+        if (remove) {
+          parent.splice(property, 1);
+        }
+        return true;
+      }
+      return false;
     },
-    rtn: "gparent",
+    abort: true,
   })(board);
-
-  return result[0].ident !== result[1].ident;
-}
-
-export function move(board: IBoard, event: DragOverEvent, submission: boolean) {
-  const { active, over } = event;
-
-  const activeId = active.id as string;
-  const overId = over?.id as string;
-
-  if (!overId) return;
-
-  if (!cardsAreInADifferentBucket(board, activeId, overId) && !submission) {
-    return false;
-  }
-
-  debugger;
-  if (activeId !== overId && identIsACard(board, overId)) {
-    let card = removeCardByIdent(board, activeId) as ICard;
-    addCardToBucket(board, card, overId);
-    useBoardStore.getState().setBoard(board);
-  } else {
-  }
-}
-
-export function identIsACard(board: IBoard, ident: string): boolean {
-  let result = objectScan([`buckets[*].cards[*].ident`], {
-    rtn: "bool",
-    filterFn: ({ value }) => {
-      return value === ident;
-    },
-  })(board) as boolean;
   return result;
 }
 
-export function findByIdent(
-  board: IBoard,
-  ident: string,
-  relative: string = "parent",
-): any {
-  let result: ICard[] = objectScan([`buckets[*].cards[*].ident`], {
-    rtn: relative,
-    filterFn: ({ value }) => {
-      return value === ident;
-    },
-  })(board) as ICard[];
-  return result[0];
-}
-
-export function removeCardByIdent(board: IBoard, ident: string) {
-  return objectScan([`buckets[*].cards[*]`], {
-    rtn: "value",
-    abort: true,
-    filterFn: ({ parent, property, value }) => {
-      if (value.ident === ident) {
-        parent.splice(property, 1);
-        return true;
-      }
-      return false;
-    },
-  })(board);
-}
-
-export function addCardToBucket(
-  board: IBoard,
-  card: ICard,
-  ident: string,
-): boolean {
-  let array: IBucket = objectScan([`buckets[*].cards[*]`], {
-    rtn: "gparent",
-    abort: true,
-    filterFn: ({ value }) => {
-      if (value.ident === ident) {
-        return true;
-      }
-      return false;
-    },
-  })(board) as IBucket;
-
-  if (array) {
-    let index = 0;
-    index = array.cards.findIndex((item) => item.ident === ident);
-    console.log(index);
-    array.cards.splice(Math.min(index + 1, array.cards.length), 0, card);
-    return true;
+function areCards(board: IBoard, param: (string | number)[]) {
+  for (let i = 0; i < param.length; i++) {
+    const element = param[i];
+    let result: boolean = objectScan(["buckets[*].cards[*]"], {
+      rtn: "bool",
+      filterFn: ({ value }) => {
+        if (value.ident === (element as string)) {
+          return true;
+        }
+        return false;
+      },
+      abort: true,
+    })(board);
+    if (!result) return false;
   }
 
-  return false;
+  return true;
+}
+
+export function move(board: IBoard, event: DragOverEvent) {
+  const { active, over } = event;
+
+  if (!over?.id) return;
+  if (over.id === active.id) return;
+  if (!areCards(board, [active.id, over.id])) return;
+
+  let activeCard = getCard(board, active.id, true);
+
+  let [overCard, destinationArray]: [
+    overCard: ICard,
+    destinationArray: ICard[],
+  ] = getCard(board, over.id, false, ["value", "parent"]);
+
+  if (activeCard && overCard) {
+    let index = destinationArray.findIndex((item) => item.ident === over.id);
+    if (isBelowOverItem(active, over)) {
+      destinationArray.splice(index + 1, 0, activeCard);
+    } else {
+      destinationArray.splice(index, 0, activeCard);
+    }
+
+    return board;
+  }
 }

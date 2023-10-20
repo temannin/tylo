@@ -1,16 +1,17 @@
 import { Bucket, IBucket } from "./Bucket.tsx";
 import {
   DndContext,
-  DragEndEvent,
   DragOverlay,
-  PointerSensor,
+  MeasuringStrategy,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { findByIdent, move } from "./utils/boardUtils.ts";
 import { Card } from "./components/Card.tsx";
 import { useShallow } from "zustand/react/shallow";
 import { useBoardStore } from "./utils/state.ts";
+import { move } from "./utils/boardUtils.ts";
 
 export interface IBoard {
   created_at: Date;
@@ -25,45 +26,52 @@ export function Board({ data }: { data: IBoard }) {
     useShallow((state) => [state.active, state.board, state.setActive]),
   );
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
         distance: 8,
       },
     }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 6,
+      },
+    }),
   );
-
-  function handleDragOver(event: DragEndEvent) {
-    let boardClone = JSON.parse(JSON.stringify(board));
-    if (event.active.id === event.over?.id) return;
-    move(boardClone, event, false);
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    let boardClone = JSON.parse(JSON.stringify(board));
-    if (event.active.id === event.over?.id) return;
-    move(boardClone, event, true);
-  }
-
-  const overlayData = (() => {
-    let result = findByIdent(board, active);
-    return result;
-  })();
 
   return (
     <>
       <DndContext
+        measuring={{
+          dragOverlay: {
+            strategy: MeasuringStrategy.Always,
+          },
+        }}
         sensors={sensors}
         onDragStart={(event) => {
           setActive(event.active.id.toString());
         }}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
+        onDragOver={(event) => {
+          let clonedBoard = JSON.parse(JSON.stringify(board));
+          move(clonedBoard, event);
+          useBoardStore.getState().setBoard(clonedBoard);
+        }}
       >
         {data.buckets?.map((item) => {
           return <Bucket key={item.ident} data={item}></Bucket>;
         })}
         <DragOverlay>
-          <Card data={overlayData}></Card>
+          <Card
+            data={{
+              id: 1,
+              title: "",
+              description: "",
+              created_at: new Date(),
+              updated_at: new Date(),
+              ident: "dfsdf",
+              bucket_id: 1,
+            }}
+          ></Card>
         </DragOverlay>
       </DndContext>
     </>
