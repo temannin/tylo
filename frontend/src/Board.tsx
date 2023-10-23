@@ -29,7 +29,13 @@ export function Board({ data }: { data: IBoard }) {
     useShallow((state) => [state.active, state.board, state.setActive]),
   );
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 6,
+      },
+    }),
+  );
 
   const activeItem: ICard = getCard(board, active);
 
@@ -37,7 +43,7 @@ export function Board({ data }: { data: IBoard }) {
     <>
       <DndContext
         measuring={{
-          dragOverlay: {
+          droppable: {
             strategy: MeasuringStrategy.Always,
           },
         }}

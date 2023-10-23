@@ -88,7 +88,7 @@ function ClosedCard({
       className="w-full border-2 rounded shadow p-2 mb-2 cursor-pointer hover:bg-gray-200"
       onClick={() => openState.setOpen(true)}
     >
-      {data.title}
+      {data.ident}
     </div>
   );
 }

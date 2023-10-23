@@ -48,15 +48,24 @@ export function Bucket({ data }: { data: IBucket }) {
 }
 
 function DroppableContainer({ children, id }: { children: any; id: string }) {
-  const { attributes, listeners, setNodeRef } = useSortable({
+  const { isOver, attributes, listeners, setNodeRef } = useSortable({
     id,
     data: {
       type: "container",
     },
   });
+
+  if (isOver) {
+    console.log("Over container");
+  }
   return (
     <>
-      <div {...attributes} {...listeners} ref={setNodeRef}>
+      <div
+        {...attributes}
+        {...listeners}
+        ref={setNodeRef}
+        style={{ height: "100%" }}
+      >
         {id}
         {children}
       </div>
