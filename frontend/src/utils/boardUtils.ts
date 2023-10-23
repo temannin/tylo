@@ -2,10 +2,14 @@ import { Active, DragOverEvent, Over, UniqueIdentifier } from "@dnd-kit/core";
 import { IBoard } from "../Board.tsx";
 import { ICard } from "../components/Card.tsx";
 import objectScan from "object-scan";
+import { IBucket } from "../Bucket.tsx";
 
 export function isBelowOverItem(event: DragOverEvent): boolean {
-  if (!event.delta) return false;
-  return event.delta.y > 1;
+  let offset = event.delta.y > 1 ? 24 : -24;
+  let overLocation = event.over?.rect.top;
+  let activeLocation = event.active.rect.current.translated?.top + offset;
+
+  return activeLocation + offset >= overLocation;
 }
 
 export function getCard(
@@ -49,13 +53,8 @@ function areCards(board: IBoard, param: (string | number)[]) {
   return true;
 }
 
-export function move(board: IBoard, event: DragOverEvent) {
+function moveCardOverCard(board: IBoard, event: DragOverEvent) {
   const { active, over } = event;
-
-  if (!over?.id) return;
-  if (over.id === active.id) return;
-  if (!areCards(board, [active.id, over.id])) return;
-
   let activeCard = getCard(board, active.id, true);
 
   let [overCard, destinationArray]: [
@@ -72,5 +71,30 @@ export function move(board: IBoard, event: DragOverEvent) {
     }
 
     return board;
+  }
+}
+
+function moveCardIntoBucket(board: IBoard, event: DragOverEvent) {
+  let bucket: IBucket = objectScan(["buckets[*]"], {
+    rtn: "value",
+    filterFn: ({ value }) => {
+      return value.ident === event.over?.id;
+    },
+    abort: true,
+  })(board);
+
+  let card = getCard(board, event.active.id, true);
+  bucket.cards.push(card);
+}
+
+export function move(board: IBoard, event: DragOverEvent) {
+  const { active, over } = event;
+
+  if (!over?.id) return;
+  if (over.id === active.id) return;
+  if (areCards(board, [active.id, over.id])) {
+    moveCardOverCard(board, event);
+  } else {
+    moveCardIntoBucket(board, event);
   }
 }
