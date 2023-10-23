@@ -25,7 +25,7 @@ export default function App() {
 
   return (
     <>
-      <div className={"ml-2 flex"}>
+      <div className={"ml-2 max-h-full overflow-y-hidden"}>
         {board ? <Board data={board}></Board> : null}
       </div>
     </>

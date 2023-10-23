@@ -1,4 +1,4 @@
-import { Active, DragOverEvent, Over, UniqueIdentifier } from "@dnd-kit/core";
+import { DragOverEvent, UniqueIdentifier } from "@dnd-kit/core";
 import { IBoard } from "../Board.tsx";
 import { ICard } from "../components/Card.tsx";
 import objectScan from "object-scan";
@@ -7,10 +7,11 @@ import { IBucket } from "../Bucket.tsx";
 export function isBelowOverItem(event: DragOverEvent): boolean {
   let offset = event.delta.y > 1 ? 24 : -24;
   let overLocation = event.over?.rect.top;
-  let activeLocation = event.active.rect.current.translated?.top + offset;
+  let activeTop = event.active.rect.current.translated?.top;
 
-  console.log("ACTIVE", activeLocation, "OVER", overLocation);
+  if (!activeTop || !overLocation) throw new Error("Active/Over was undefined");
 
+  let activeLocation = activeTop + offset;
   return activeLocation + offset >= overLocation;
 }
 
@@ -39,7 +40,7 @@ export function getCard(
 function areCards(board: IBoard, param: (string | number)[]) {
   for (let i = 0; i < param.length; i++) {
     const element = param[i];
-    let result: boolean = objectScan(["buckets[*].cards[*]"], {
+    let result = objectScan(["buckets[*].cards[*]"], {
       rtn: "bool",
       filterFn: ({ value }) => {
         if (value.ident === (element as string)) {
@@ -48,7 +49,8 @@ function areCards(board: IBoard, param: (string | number)[]) {
         return false;
       },
       abort: true,
-    })(board);
+    })(board) as boolean;
+
     if (!result) return false;
   }
 
@@ -57,6 +59,7 @@ function areCards(board: IBoard, param: (string | number)[]) {
 
 function moveCardOverCard(board: IBoard, event: DragOverEvent) {
   const { active, over } = event;
+  if (!over?.id) return;
   let activeCard = getCard(board, active.id, true);
 
   let [overCard, destinationArray]: [
@@ -77,21 +80,16 @@ function moveCardOverCard(board: IBoard, event: DragOverEvent) {
 }
 
 function moveCardIntoBucket(board: IBoard, event: DragOverEvent) {
-  let bucket: IBucket = objectScan(["buckets[*]"], {
+  let bucket = objectScan(["buckets[*]"], {
     rtn: "value",
     filterFn: ({ value }) => {
       return value.ident === event.over?.id;
     },
     abort: true,
-  })(board);
+  })(board) as IBucket | undefined;
 
-  if (
-    bucket.cards.findIndex((value) => {
-      return value.ident === event.active.id;
-    }) !== -1
-  ) {
-    return;
-  }
+  if (!bucket) return;
+  if (bucket.cards.some((item) => item.ident === event.active.id)) return;
 
   let card = getCard(board, event.active.id, true);
   bucket.cards.push(card);

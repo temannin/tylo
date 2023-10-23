@@ -1,23 +1,19 @@
 import { Bucket, IBucket } from "./Bucket.tsx";
 import {
-  closestCenter,
   DndContext,
   DragOverlay,
+  DroppableContainer,
   MeasuringStrategy,
   MouseSensor,
   pointerWithin,
   TouchSensor,
   useSensor,
   useSensors,
-  rectIntersection,
-  closestCorners,
 } from "@dnd-kit/core";
 import { Card, ICard } from "./components/Card.tsx";
 import { useShallow } from "zustand/react/shallow";
 import { useBoardStore } from "./utils/state.ts";
 import { getCard, move } from "./utils/boardUtils.ts";
-import { Simulate } from "react-dom/test-utils";
-import pointerOver = Simulate.pointerOver;
 
 export interface IBoard {
   created_at: Date;
@@ -27,30 +23,23 @@ export interface IBoard {
   buckets: IBucket[];
 }
 
-function customCollisionDetectionAlgorithm({ droppableContainers, ...args }) {
+function customCollisionDetectionAlgorithm({
+  droppableContainers,
+  ...args
+}: {
+  droppableContainers: DroppableContainer[];
+}) {
   // @ts-ignore
-  // let collisions = closestCorners({
-  //   ...args,
-  //   droppableContainers: droppableContainers.filter(({ data }) => {
-  //     return data.current.type === "container";
-  //   }),
-  // });
-  //
-  // if (collisions.length > 0) {
-  //   return collisions;
-  // }
-
-  let containers = droppableContainers.filter(({ id }) => true);
   const pointerIntersections = pointerWithin({
     ...args,
-    droppableContainers: containers,
+    droppableContainers: droppableContainers,
   });
-
-  console.log(pointerIntersections);
 
   // Compute other collisions
   return pointerIntersections;
 }
+
+//#endregion
 
 export function Board({ data }: { data: IBoard }) {
   const [active, board, setActive] = useBoardStore(
@@ -65,7 +54,8 @@ export function Board({ data }: { data: IBoard }) {
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        distance: 6,
+        delay: 100,
+        tolerance: 10,
       },
     }),
   );
@@ -90,16 +80,16 @@ export function Board({ data }: { data: IBoard }) {
           move(clonedBoard, event);
           useBoardStore.getState().setBoard(clonedBoard);
         }}
-        onDragEnd={(event) => {
+        onDragEnd={() => {
           setActive("");
-          let clonedBoard = JSON.parse(JSON.stringify(board));
-          move(clonedBoard, event);
-          useBoardStore.getState().setBoard(clonedBoard);
         }}
       >
         <div
-          style={{ userSelect: "none", display: "inline-flex" }}
-          className={"flex h-screen"}
+          style={{
+            userSelect: "none",
+            display: "inline-flex",
+          }}
+          className={"min-h-screen"}
         >
           {data.buckets?.map((item) => {
             return <Bucket key={item.ident} data={item}></Bucket>;

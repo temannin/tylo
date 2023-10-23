@@ -30,11 +30,13 @@ export function Bucket({ data }: { data: IBucket }) {
 
   return (
     <>
-      <div className={"w-[300px] border-2 my-4 rounded ml-2 bg-gray-200"}>
+      <div
+        className={"w-[300px] h-screen border-2 my-4 rounded ml-2 bg-gray-200"}
+      >
         <div className={"ml-4 mt-2 font-bold"}>
           <h1>{data.ident}</h1>
         </div>
-        <div className={"bg-white m-1 rounded p-1 h-[94%]"}>
+        <div className={"bg-white m-1 rounded p-1"}>
           <SortableContext
             strategy={verticalListSortingStrategy}
             items={cardsById}
@@ -52,17 +54,17 @@ export function Bucket({ data }: { data: IBucket }) {
 }
 
 function DroppableContainer({ children, id }: { children: any; id: string }) {
-  const { active, items, isDragging, listeners, setNodeRef, ...rest } =
-    useSortable({
-      id,
-      data: {
-        type: "container",
-      },
-    });
+  const { listeners, setNodeRef } = useSortable({
+    id,
+    disabled: true,
+    data: {
+      type: "container",
+    },
+  });
 
   return (
     <>
-      <div {...listeners} ref={setNodeRef} style={{ height: "100%" }}>
+      <div {...listeners} ref={setNodeRef} className={"h-[93svh]"}>
         {children}
       </div>
     </>
