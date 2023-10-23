@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Card, ICard } from "./components/Card.tsx";
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 export interface IBucket {
   id: number;
@@ -26,15 +30,15 @@ export function Bucket({ data }: { data: IBucket }) {
 
   return (
     <>
-      <div
-        style={{ height: "calc(100vh - 2rem)" }}
-        className={"w-[300px] border-2 my-4 rounded ml-2 bg-gray-200"}
-      >
+      <div className={"w-[300px] border-2 my-4 rounded ml-2 bg-gray-200"}>
         <div className={"ml-4 mt-2 font-bold"}>
-          <h1>{data.name}</h1>
+          <h1>{data.ident}</h1>
         </div>
         <div className={"bg-white m-1 rounded p-1 h-[94%]"}>
-          <SortableContext items={cardsById}>
+          <SortableContext
+            strategy={verticalListSortingStrategy}
+            items={cardsById}
+          >
             <DroppableContainer id={data.ident}>
               {cards.map((item) => {
                 return <Card key={item.ident} data={item} />;
@@ -48,25 +52,17 @@ export function Bucket({ data }: { data: IBucket }) {
 }
 
 function DroppableContainer({ children, id }: { children: any; id: string }) {
-  const { isOver, attributes, listeners, setNodeRef } = useSortable({
-    id,
-    data: {
-      type: "container",
-    },
-  });
+  const { active, items, isDragging, listeners, setNodeRef, ...rest } =
+    useSortable({
+      id,
+      data: {
+        type: "container",
+      },
+    });
 
-  if (isOver) {
-    console.log("Over container");
-  }
   return (
     <>
-      <div
-        {...attributes}
-        {...listeners}
-        ref={setNodeRef}
-        style={{ height: "100%" }}
-      >
-        {id}
+      <div {...listeners} ref={setNodeRef} style={{ height: "100%" }}>
         {children}
       </div>
     </>

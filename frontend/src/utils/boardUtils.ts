@@ -9,6 +9,8 @@ export function isBelowOverItem(event: DragOverEvent): boolean {
   let overLocation = event.over?.rect.top;
   let activeLocation = event.active.rect.current.translated?.top + offset;
 
+  console.log("ACTIVE", activeLocation, "OVER", overLocation);
+
   return activeLocation + offset >= overLocation;
 }
 
@@ -82,6 +84,14 @@ function moveCardIntoBucket(board: IBoard, event: DragOverEvent) {
     },
     abort: true,
   })(board);
+
+  if (
+    bucket.cards.findIndex((value) => {
+      return value.ident === event.active.id;
+    }) !== -1
+  ) {
+    return;
+  }
 
   let card = getCard(board, event.active.id, true);
   bucket.cards.push(card);
