@@ -9,6 +9,8 @@ export function isBelowOverItem(event: DragOverEvent): boolean {
   let overLocation = event.over?.rect.top;
   let activeTop = event.active.rect.current.translated?.top;
 
+  console.log(overLocation, activeTop);
+
   if (!activeTop || !overLocation) throw new Error("Active/Over was undefined");
 
   let activeLocation = activeTop + offset;
