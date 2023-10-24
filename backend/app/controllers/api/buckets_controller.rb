@@ -42,7 +42,7 @@ class Api::BucketsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_bucket
-    @bucket = Bucket.find_by(ident: params[:id])
+    @bucket = Bucket.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.

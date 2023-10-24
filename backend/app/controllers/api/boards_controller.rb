@@ -43,11 +43,11 @@ class Api::BoardsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_board
-    @board = Board.find_by(ident: params[:id])
+    @board = Board.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
   def board_params
-    params.fetch(:board, {}).permit(:name)
+    params.fetch(:board, {}).permit(:name, :updated_at, buckets_attributes: %w[name id])
   end
 end
