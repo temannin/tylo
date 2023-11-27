@@ -5,15 +5,15 @@ import objectScan from "object-scan";
 import { IBucket } from "../Bucket.tsx";
 
 export function isBelowOverItem(event: DragOverEvent): boolean {
-  let offset = event.delta.y > 1 ? 24 : -24;
-  let overLocation = event.over?.rect.top;
-  let activeTop = event.active.rect.current.translated?.top;
+  const offset = event.delta.y > 1 ? 24 : -24;
+  const overLocation = event.over?.rect.top;
+  const activeTop = event.active.rect.current.translated?.top;
 
   console.log(overLocation, activeTop);
 
   if (!activeTop || !overLocation) throw new Error("Active/Over was undefined");
 
-  let activeLocation = activeTop + offset;
+  const activeLocation = activeTop + offset;
   return activeLocation + offset >= overLocation;
 }
 
@@ -21,12 +21,12 @@ export function getCard(
   board: IBoard,
   active: UniqueIdentifier,
   remove = false,
-  selectors: string | string[] = "value",
+  selectors: string | string[] = "value"
 ): any | undefined {
-  let result = objectScan(["buckets[*].cards[*]"], {
+  const result = objectScan(["buckets[*].cards[*]"], {
     rtn: selectors,
     filterFn: ({ parent, property, value }) => {
-      if (value.ident === (active as string)) {
+      if (value.id === (active as string)) {
         if (remove) {
           parent.splice(property, 1);
         }
@@ -42,10 +42,10 @@ export function getCard(
 function areCards(board: IBoard, param: (string | number)[]) {
   for (let i = 0; i < param.length; i++) {
     const element = param[i];
-    let result = objectScan(["buckets[*].cards[*]"], {
+    const result = objectScan(["buckets[*].cards[*]"], {
       rtn: "bool",
       filterFn: ({ value }) => {
-        if (value.ident === (element as string)) {
+        if (value.id === (element as string)) {
           return true;
         }
         return false;
@@ -62,15 +62,15 @@ function areCards(board: IBoard, param: (string | number)[]) {
 function moveCardOverCard(board: IBoard, event: DragOverEvent) {
   const { active, over } = event;
   if (!over?.id) return;
-  let activeCard = getCard(board, active.id, true);
+  const activeCard = getCard(board, active.id, true);
 
-  let [overCard, destinationArray]: [
+  const [overCard, destinationArray]: [
     overCard: ICard,
     destinationArray: ICard[],
   ] = getCard(board, over.id, false, ["value", "parent"]);
 
   if (activeCard && overCard) {
-    let index = destinationArray.findIndex((item) => item.ident === over.id);
+    const index = destinationArray.findIndex((item) => item.id === over.id);
     if (isBelowOverItem(event)) {
       destinationArray.splice(index + 1, 0, activeCard);
     } else {
@@ -82,18 +82,18 @@ function moveCardOverCard(board: IBoard, event: DragOverEvent) {
 }
 
 function moveCardIntoBucket(board: IBoard, event: DragOverEvent) {
-  let bucket = objectScan(["buckets[*]"], {
+  const bucket = objectScan(["buckets[*]"], {
     rtn: "value",
     filterFn: ({ value }) => {
-      return value.ident === event.over?.id;
+      return value.id === event.over?.id;
     },
     abort: true,
   })(board) as IBucket | undefined;
 
   if (!bucket) return;
-  if (bucket.cards.some((item) => item.ident === event.active.id)) return;
+  if (bucket.cards.some((item) => item.id === event.active.id)) return;
 
-  let card = getCard(board, event.active.id, true);
+  const card = getCard(board, event.active.id, true);
   bucket.cards.push(card);
 }
 

@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { Board, IBoard } from "./Board.tsx";
+import { Board, IBoard } from "./Board";
 import { useParams } from "react-router-dom";
 
-import { useBoardStore } from "./utils/state.ts";
+import { useBoardStore } from "./utils/state";
 import { useShallow } from "zustand/react/shallow";
 
 export default function App() {
@@ -16,7 +16,7 @@ export default function App() {
       const response = await fetch(`/api/boards/${boardId}`);
       if (!response.ok) return;
 
-      let json: IBoard = await response.json();
+      const json: IBoard = await response.json();
       setBoard(json);
     }
 

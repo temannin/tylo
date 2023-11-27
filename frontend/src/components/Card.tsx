@@ -5,12 +5,11 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 export interface ICard {
-  id: number;
+  id: string;
   title: string;
   bucket_id: number;
   created_at: Date;
   updated_at: Date;
-  ident: string;
   description: string;
 }
 
@@ -23,7 +22,7 @@ export function Card({ data }: { data: ICard }) {
   const params = useParams();
   const navigate = useNavigate();
 
-  const [open, setOpenFinal] = useState(params?.cardId === data.ident);
+  const [open, setOpenFinal] = useState(params?.cardId === data.id);
 
   const setOpen = (value: boolean) => {
     setOpenFinal(value);
@@ -31,7 +30,7 @@ export function Card({ data }: { data: ICard }) {
     let url = `/boards/${params.boardId}`;
 
     if (value) {
-      url = `${url}/cards/${data.ident}`;
+      url = `${url}/cards/${data.id}`;
     }
 
     navigate(url);
@@ -71,7 +70,7 @@ function ClosedCard({
     attributes,
     listeners,
     transition,
-  } = useSortable({ id: data.ident });
+  } = useSortable({ id: data.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -89,7 +88,7 @@ function ClosedCard({
       className="w-full border-2 rounded shadow p-2 mb-2 cursor-pointer hover:bg-gray-200"
       onClick={() => openState.setOpen(true)}
     >
-      <p>{data.ident}</p>
+      <p>{data.title}</p>
     </div>
   );
 }

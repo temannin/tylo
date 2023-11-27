@@ -7,6 +7,7 @@
 #   Character.create(name: "Luke", movie: movies.first)
 
 board = Board.create({})
+board.id = "7ea19b73-4148-435f-9454-1ef209540cbb"
 board.save
 
 bucket = Bucket.create([{ name: "Not Started", board_id: board.id }, { name: "In Progress", board_id: board.id }])

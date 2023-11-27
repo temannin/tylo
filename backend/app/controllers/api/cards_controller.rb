@@ -46,6 +46,6 @@ class Api::CardsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def card_params
-      params.require(:card).permit(:title, :bucket_id_id)
+      params.require(:card).permit(:title, :bucket_id, :description)
     end
 end

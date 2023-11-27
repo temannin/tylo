@@ -1,7 +1,9 @@
-import { Bucket, IBucket } from "./Bucket.tsx";
 import {
   DndContext,
+  DragEndEvent,
+  DragOverEvent,
   DragOverlay,
+  DragStartEvent,
   DroppableContainer,
   MeasuringStrategy,
   MouseSensor,
@@ -10,16 +12,19 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { Card, ICard } from "./components/Card.tsx";
+import { Card, ICard } from "./components/Card";
 import { useShallow } from "zustand/react/shallow";
-import { useBoardStore } from "./utils/state.ts";
-import { getCard, move } from "./utils/boardUtils.ts";
+import { useBoardStore } from "./utils/state";
+import { getCard, move } from "./utils/boardUtils";
+import { Bucket, IBucket } from "./Bucket";
+import useWindowDimensions from "./utils/hooks/useWindowDimensions";
+import { saveCard } from "./utils/api";
 
 export interface IBoard {
   created_at: Date;
   updated_at: Date;
   name: null;
-  ident: string;
+  id: string;
   buckets: IBucket[];
 }
 
@@ -29,7 +34,7 @@ function customCollisionDetectionAlgorithm({
 }: {
   droppableContainers: DroppableContainer[];
 }) {
-  // @ts-ignore
+  //@ts-ignore
   const pointerIntersections = pointerWithin({
     ...args,
     droppableContainers: droppableContainers,
@@ -43,7 +48,7 @@ function customCollisionDetectionAlgorithm({
 
 export function Board({ data }: { data: IBoard }) {
   const [active, board, setActive] = useBoardStore(
-    useShallow((state) => [state.active, state.board, state.setActive]),
+    useShallow((state) => [state.active, state.board, state.setActive])
   );
 
   const sensors = useSensors(
@@ -57,8 +62,10 @@ export function Board({ data }: { data: IBoard }) {
         delay: 100,
         tolerance: 10,
       },
-    }),
+    })
   );
+
+  const { height } = useWindowDimensions();
 
   const activeItem: ICard = getCard(board, active);
 
@@ -72,27 +79,36 @@ export function Board({ data }: { data: IBoard }) {
         }}
         collisionDetection={customCollisionDetectionAlgorithm}
         sensors={sensors}
-        onDragStart={(event) => {
+        onDragStart={(event: DragStartEvent) => {
           setActive(event.active.id.toString());
         }}
-        onDragOver={(event) => {
-          let clonedBoard = JSON.parse(JSON.stringify(board));
+        onDragOver={(event: DragOverEvent) => {
+          const clonedBoard = JSON.parse(JSON.stringify(board));
           move(clonedBoard, event);
           useBoardStore.getState().setBoard(clonedBoard);
         }}
-        onDragEnd={() => {
+        onDragEnd={(e: DragEndEvent) => {
           setActive("");
+          const [bucket, card] = getCard(
+            useBoardStore.getState().board,
+            e.active.id,
+            false,
+            ["gparent", "value"]
+          );
+
+          saveCard({ ...card, ...{ bucket_id: bucket.id } });
         }}
       >
         <div
           style={{
             userSelect: "none",
             display: "inline-flex",
+            height: height,
+            padding: 8,
           }}
-          className={"min-h-screen"}
         >
           {data.buckets?.map((item) => {
-            return <Bucket key={item.ident} data={item}></Bucket>;
+            return <Bucket key={item.id} data={item}></Bucket>;
           })}
         </div>
         <DragOverlay>

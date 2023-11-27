@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { IBoard } from "../Board.tsx";
+import { IBoard } from "../Board";
 
 interface BoardState {
   board: IBoard;
@@ -10,7 +10,7 @@ interface BoardState {
 
 export const useBoardStore = create<BoardState>()((set) => ({
   board: {
-    ident: "",
+    id: "",
     buckets: [],
     created_at: new Date(),
     updated_at: new Date(),

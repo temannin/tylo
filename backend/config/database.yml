@@ -6,15 +6,15 @@
 #
 default: &default
   adapter: postgresql
-  username: rails
+  username: <%= ENV.fetch("DB_USERNAME") %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
-  host: localhost
+  host: 192.168.0.165
   port: 5432
 
 development:
   <<: *default
-  database: tylo
+  database: tylo_dev
   password: <%= ENV.fetch("DB_PASSWORD") %>
 
 

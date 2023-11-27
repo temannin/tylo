@@ -11,7 +11,7 @@ class Api::BoardsController < ApplicationController
   end
 
   def show
-    render json: remove_id_property(@board.as_json(include: { buckets: { include: :cards } }))
+    render json: @board.as_json(include: { buckets: { include: :cards } })
   end
 
   # POST /boards

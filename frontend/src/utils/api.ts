@@ -1,4 +1,5 @@
-import { IBoard } from "../Board.tsx";
+import { IBoard } from "../Board";
+import { ICard } from "../components/Card";
 
 export async function getBoard(id: number) {
   return await fetch(`/api/boards/${id}`);
@@ -17,4 +18,14 @@ export async function saveBoard(board: IBoard) {
     method: "PUT",
     body: JSON.stringify(board),
   });
+}
+
+export async function saveCard(card: ICard) {
+  const options = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(card),
+  };
+
+  return await fetch(`/api/cards/${card.id}`, options);
 }
