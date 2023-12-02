@@ -1,14 +1,10 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ICard, IOpenState } from "./Card";
+import { useCard } from "./Card";
 
-export default function ClosedCard({
-  data,
-  openState,
-}: {
-  data: ICard;
-  openState: IOpenState;
-}) {
+export default function ClosedCard() {
+  const { card, setIsOpen } = useCard();
+
   const {
     isDragging,
     transform,
@@ -16,7 +12,7 @@ export default function ClosedCard({
     attributes,
     listeners,
     transition,
-  } = useSortable({ id: data.id });
+  } = useSortable({ id: card.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -32,9 +28,9 @@ export default function ClosedCard({
       {...attributes}
       {...listeners}
       className="w-full border-2 rounded shadow p-2 mb-2 cursor-pointer hover:bg-gray-200"
-      onClick={() => openState.setOpen(true)}
+      onClick={() => setIsOpen(true)}
     >
-      <p>{data.title}</p>
+      <p>{card.title}</p>
     </div>
   );
 }

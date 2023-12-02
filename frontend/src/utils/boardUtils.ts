@@ -108,3 +108,5 @@ export function move(board: IBoard, event: DragOverEvent) {
     moveCardIntoBucket(board, event);
   }
 }
+
+export function updateCard(board: IBoard, card: ICard) {}
