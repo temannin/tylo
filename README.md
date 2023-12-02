@@ -39,7 +39,7 @@ tylo is a full-stack Trello alternative designed to streamline project managemen
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/tylo.git
+   git clone https://github.com/temannin/tylo.git
    cd tylo
    ```
 
