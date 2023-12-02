@@ -1,99 +1,19 @@
 import { useState } from "react";
-import { TextEditor } from "./TextEditor/TextEditor.tsx";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import TextEditor from "../TextEditor/TextEditor";
+import { Default, Switch } from "../global/Switch";
+import { ICard, IOpenState, OpenCardDisplayState } from "./Card";
 
-export interface ICard {
-  id: string;
-  title: string;
-  bucket_id: number;
-  created_at: Date;
-  updated_at: Date;
-  description: string;
-}
-
-interface IOpenState {
-  open: boolean;
-  setOpen: (value: boolean) => void;
-}
-
-export function Card({ data }: { data: ICard }) {
-  const params = useParams();
-  const navigate = useNavigate();
-
-  const [open, setOpenFinal] = useState(params?.cardId === data.id);
-
-  const setOpen = (value: boolean) => {
-    setOpenFinal(value);
-
-    let url = `/boards/${params.boardId}`;
-
-    if (value) {
-      url = `${url}/cards/${data.id}`;
-    }
-
-    navigate(url);
-  };
-
-  return (
-    <>
-      {open ? (
-        <>
-          <OpenCard
-            data={data}
-            openState={{
-              open,
-              setOpen,
-            }}
-          ></OpenCard>
-          <ClosedCard data={data} openState={{ open, setOpen }}></ClosedCard>
-        </>
-      ) : (
-        <ClosedCard data={data} openState={{ open, setOpen }}></ClosedCard>
-      )}
-    </>
-  );
-}
-
-function ClosedCard({
+export default function OpenCard({
   data,
   openState,
 }: {
   data: ICard;
   openState: IOpenState;
 }) {
-  const {
-    isDragging,
-    transform,
-    setNodeRef,
-    attributes,
-    listeners,
-    transition,
-  } = useSortable({ id: data.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition: transition,
-    opacity: isDragging ? 0.5 : 1,
-    touchAction: "none",
-  };
-
-  return (
-    <div
-      style={style}
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      className="w-full border-2 rounded shadow p-2 mb-2 cursor-pointer hover:bg-gray-200"
-      onClick={() => openState.setOpen(true)}
-    >
-      <p>{data.title}</p>
-    </div>
+  const [displayState, setDisplayState] = useState<OpenCardDisplayState>(
+    OpenCardDisplayState.DESCRIPTION
   );
-}
 
-function OpenCard({ data, openState }: { data: ICard; openState: IOpenState }) {
   const close = () => {
     openState.setOpen(false);
   };
@@ -110,7 +30,15 @@ function OpenCard({ data, openState }: { data: ICard; openState: IOpenState }) {
         tabIndex={-1}
         className="z-[1] bg-black opacity-50 fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%)] max-h-full"
       ></div>
-      <div className="z-[2] m-auto sm:w-12/12 md:w-10/12 xl:w-8/12 max-h-full absolute left-0 right-0">
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+        className=" z-[2] m-auto sm:w-12/12 md:w-10/12 xl:w-8/12 max-h-full absolute left-0 right-0"
+      >
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
           <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -141,7 +69,11 @@ function OpenCard({ data, openState }: { data: ICard; openState: IOpenState }) {
             </button>
           </div>
           <div className="px-2 pb-2">
-            <TextEditor />
+            <Switch>
+              <Default>
+                <TextEditor />
+              </Default>
+            </Switch>
           </div>
           <div className="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
             <button

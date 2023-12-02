@@ -1,8 +1,8 @@
 import { DragOverEvent, UniqueIdentifier } from "@dnd-kit/core";
-import { IBoard } from "../Board.tsx";
-import { ICard } from "../components/Card.tsx";
+import { IBoard } from "../Board";
+import { ICard } from "../components/Card/Card";
 import objectScan from "object-scan";
-import { IBucket } from "../Bucket.tsx";
+import { IBucket } from "../Bucket";
 
 export function isBelowOverItem(event: DragOverEvent): boolean {
   const offset = event.delta.y > 1 ? 24 : -24;

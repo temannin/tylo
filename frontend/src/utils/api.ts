@@ -1,5 +1,5 @@
 import { IBoard } from "../Board";
-import { ICard } from "../components/Card";
+import { ICard } from "../components/Card/Card";
 
 export async function getBoard(id: number) {
   return await fetch(`/api/boards/${id}`);
@@ -28,4 +28,18 @@ export async function saveCard(card: ICard) {
   };
 
   return await fetch(`/api/cards/${card.id}`, options);
+}
+
+export async function createCard(bucket_id: string) : Promise<Response> {
+  const card = {
+    bucket_id: bucket_id,
+  }
+
+  const options = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(card),
+  };
+
+  return await fetch(`/api/cards`, options);
 }

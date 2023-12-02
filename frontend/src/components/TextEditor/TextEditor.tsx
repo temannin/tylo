@@ -1,29 +1,25 @@
-import {
-  BoldButton,
-  Editor,
-  EditorComposer,
-  ItalicButton,
-  ToolbarPlugin,
-  UnderlineButton,
-} from "verbum";
+import { TextareaHTMLAttributes } from "react";
 
-import "./TextEditorTheme.css";
-
-export function TextEditor() {
+function TextEditor({
+  onChange,
+  value,
+  ...props
+}: TextareaHTMLAttributes<HTMLTextAreaElement>): JSX.Element {
   return (
-    <>
-      <EditorComposer>
-        <div className={"border-2 rounded w-full"}>
-          <Editor hashtagsEnabled={true}>
-            <ToolbarPlugin defaultFontSize="12px">
-              <BoldButton />
-              <ItalicButton />
-              <UnderlineButton />
-            </ToolbarPlugin>
-            <div className={"w-full mt-1.5 h-[2px] bg-gray-200"}></div>
-          </Editor>
-        </div>
-      </EditorComposer>
-    </>
+    <textarea
+      placeholder="Enter description"
+      style={{
+        width: "100%", // You can adjust the width as needed
+        height: "400px", // You can adjust the height as needed
+        fontSize: "14px", // You can adjust the font size as needed
+        padding: "8px", // You can adjust the padding as needed
+        outline: "none",
+      }}
+      value={value}
+      onChange={onChange}
+      {...props}
+    />
   );
 }
+
+export default TextEditor;

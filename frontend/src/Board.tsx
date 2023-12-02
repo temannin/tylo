@@ -12,7 +12,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { Card, ICard } from "./components/Card";
+import { Card, ICard } from "./components/Card/Card";
 import { useShallow } from "zustand/react/shallow";
 import { useBoardStore } from "./utils/state";
 import { getCard, move } from "./utils/boardUtils";
