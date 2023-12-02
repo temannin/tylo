@@ -1,6 +1,6 @@
 # tylo - Full-Stack Trello Alternative
 
-tylo is a full-stack Trello alternative designed to streamline project management, collaboration, and task tracking. With an intuitive interface and powerful features, tylo helps teams stay organized and boost productivity.
+tylo is a full-stack Trello alternative designed to streamline project management,collaboration, and task tracking. With an intuitive interface and powerful features, tylo helps teams stay organized and boost productivity.
 
 ## Features
 
