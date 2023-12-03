@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import OpenCard from "./OpenCard";
 import ClosedCard from "./ClosedCard";
 import { useIsFirstRender } from "../../utils/hooks/useIsFirstRender";
-import { saveCard } from "../../utils/api";
 import { useBoardStore } from "../../utils/state";
 
 export interface ICard {
@@ -13,6 +12,7 @@ export interface ICard {
   created_at: Date;
   updated_at: Date;
   description: string;
+  order: number;
 }
 
 export interface CardContextType {

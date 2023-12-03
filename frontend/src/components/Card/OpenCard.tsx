@@ -60,7 +60,14 @@ export default function OpenCard() {
           <div className="px-2 pb-2">
             <Switch>
               <Default>
-                <TextEditor />
+                <TextEditor
+                  value={card.description}
+                  onChange={(e) => {
+                    setCard((prev) => {
+                      return { ...prev, ...{ description: e.target.value } };
+                    });
+                  }}
+                />
               </Default>
             </Switch>
           </div>

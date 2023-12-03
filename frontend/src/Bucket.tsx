@@ -29,7 +29,11 @@ export function Bucket({ data }: { data: IBucket }) {
     useState(false);
 
   useEffect(() => {
-    setCards(data.cards);
+    setCards(
+      data.cards.map((item, idx) => {
+        return { ...item, ...{ bucket_id: data.id, order: idx } };
+      })
+    );
   }, [data.cards]);
 
   const cardsById = cards.map((item) => {
