@@ -18,7 +18,7 @@ import { useBoardStore } from "./utils/state";
 import { getCard, move } from "./utils/boardUtils";
 import { Bucket, IBucket } from "./Bucket";
 import useWindowDimensions from "./utils/hooks/useWindowDimensions";
-import { saveCard } from "./utils/api";
+import { saveBoard, saveCard } from "./utils/api";
 
 export interface IBoard {
   created_at: Date;
@@ -95,8 +95,9 @@ export function Board({ data }: { data: IBoard }) {
             false,
             ["gparent", "value"]
           );
-
+          console.log("Firing");
           saveCard({ ...card, ...{ bucket_id: bucket.id } });
+          saveBoard(useBoardStore.getState().board);
         }}
       >
         <div

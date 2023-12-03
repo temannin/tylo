@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import OpenCard from "./OpenCard";
-import ClosedCard from "./ClosedCard";
 import { useIsFirstRender } from "../../utils/hooks/useIsFirstRender";
 import { useBoardStore } from "../../utils/state";
+import ClosedCard from "./ClosedCard";
+import OpenCard from "./OpenCard";
 
 export interface ICard {
   id: string;

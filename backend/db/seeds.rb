@@ -14,8 +14,8 @@ bucket = Bucket.create([{ name: "Not Started", board_id: board.id }, { name: "In
 first_bucket = bucket.first
 second_bucket = bucket[1]
 
-Card.create({ title: "Get routing working", bucket_id: first_bucket.id })
-Card.create({ title: "Lexical integration", bucket_id: first_bucket.id })
-Card.create({ title: "Authentication functionality", bucket_id: second_bucket.id })
+Card.create({ title: "Get routing working", bucket_id: first_bucket.id, order: 0 })
+Card.create({ title: "Lexical integration", bucket_id: first_bucket.id, order: 1 })
+Card.create({ title: "Authentication functionality", bucket_id: second_bucket.id, order: 0 })
 
 

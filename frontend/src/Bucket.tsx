@@ -29,11 +29,7 @@ export function Bucket({ data }: { data: IBucket }) {
     useState(false);
 
   useEffect(() => {
-    setCards(
-      data.cards.map((item, idx) => {
-        return { ...item, ...{ bucket_id: data.id, order: idx } };
-      })
-    );
+    setCards(data.cards);
   }, [data.cards]);
 
   const cardsById = cards.map((item) => {
@@ -44,7 +40,6 @@ export function Bucket({ data }: { data: IBucket }) {
     setCreateBucketButtonIsLoading(true);
     let card = await useBoardStore.getState().createCard(data.id);
     if (!card) return;
-
     let url = `/boards/${params.boardId}/cards/${card.id}`;
     navigate(url);
     setCreateBucketButtonIsLoading(false);

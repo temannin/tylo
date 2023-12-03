@@ -14,7 +14,19 @@ export async function getCard(ident: string) {
 }
 
 export async function saveBoard(board: IBoard) {
-  return await fetch("/api/boards/", {
+  for (let index = 0; index < board.buckets.length; index++) {
+    const element = board.buckets[index];
+    for (let cardIndex = 0; cardIndex < element.cards.length; cardIndex++) {
+      const card = element.cards[cardIndex];
+      if (card.order !== cardIndex) {
+        debugger;
+        card.order = cardIndex;
+        saveCard(card);
+      }
+    }
+  }
+
+  return await fetch(`/api/boards/${board.id}`, {
     method: "PUT",
     body: JSON.stringify(board),
   });
@@ -30,10 +42,10 @@ export async function saveCard(card: ICard) {
   return await fetch(`/api/cards/${card.id}`, options);
 }
 
-export async function createCard(bucket_id: string) : Promise<Response> {
+export async function createCard(bucket_id: string): Promise<Response> {
   const card = {
     bucket_id: bucket_id,
-  }
+  };
 
   const options = {
     method: "POST",
