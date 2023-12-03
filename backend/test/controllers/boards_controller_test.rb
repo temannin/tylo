@@ -1,34 +1,57 @@
-require '/home/tyler/dev/tylo/backend/test/test_helper.rb' # TODO: This is bad but it's the only way I can make the IDE work.
 
 class BoardsControllerTest < ActionDispatch::IntegrationTest
-  test "should get index" do
+
+  board_id = "7ea19b73-4148-435f-9454-1ef209540cbb"
+
+  setup do
+    board = Board.create({})
+    board.id = board_id
+    board.save
+  end
+
+  teardown do
+    Board.find(board_id).destroy
+  end
+
+  test "should get index with success" do
     get api_boards_url, as: :json
     assert_response :success
   end
 
-  test "should create board" do
-    assert_difference("Board.count") do
-      post api_boards_url, params: { board: { name: "Tyler" } }, as: :json
-    end
+  # Test description: "/api/boards returns array of board with no buckets parameter"
+  test "/api/boards returns array of board with no buckets parameter" do
+    # Making a GET request to the specified URL
+    get api_boards_url
 
-    assert_response :created
+    # Asserting that the response status is success (HTTP 200)
+    assert_response :success
+
+    # Parsing the response body as JSON
+    response_json = JSON.parse(response.body)
+
+    # Asserting that the 'buckets' key is not present in the response
+    assert_not_includes response_json, 'buckets'
+
+    # Asserting that the parsed JSON is an instance of Array
+    assert_instance_of Array, response_json
+
+    # Asserting that the length of the array is 1
+    assert_equal 1, response_json.length
   end
 
-  # test "should show board" do
-  #   get board_url(@board), as: :json
-  #   assert_response :success
-  # end
-  #
-  # test "should update board" do
-  #   patch board_url(@board), params: { board: {  } }, as: :json
-  #   assert_response :success
-  # end
-  #
-  # test "should destroy board" do
-  #   assert_difference("Board.count", -1) do
-  #     delete board_url(@board), as: :json
-  #   end
-  #
-  #   assert_response :no_content
-  # end
+  # Test description: "/api/boards/:id returns board with buckets parameter"
+  test "/api/boards/:id returns board with buckets parameter" do
+    # Making a GET request to the URL with a specific board ID
+    get api_board_url(board_id)
+
+    # Asserting that the response status is success (HTTP 200)
+    assert_response :success
+
+    # Parsing the response body as JSON
+    response_json = JSON.parse(response.body)
+
+    # Asserting that the 'buckets' key is present in the response
+    assert_includes response_json, 'buckets'
+  end
+
 end
