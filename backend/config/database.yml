@@ -7,6 +7,7 @@
 default: &default
   adapter: postgresql
   username: <%= ENV.fetch("DB_USERNAME") %>
+  password: <%= ENV.fetch("DB_PASSWORD") %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
   host: 192.168.0.165
@@ -15,8 +16,6 @@ default: &default
 development:
   <<: *default
   database: tylo_dev
-  password: <%= ENV.fetch("DB_PASSWORD") %>
-
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -24,7 +23,7 @@ development:
 test:
   <<: *default
   database: tylo_test
-  password: <%= ENV.fetch("DB_PASSWORD") %>
 
 production:
   <<: *default
+  database: tylo_prod
