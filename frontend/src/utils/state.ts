@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { IBoard } from "../Board";
-import { createBucket, createCard, saveCard, updateBucket } from "./api";
+import {
+  createBucket,
+  createCard,
+  deleteCard,
+  saveCard,
+  updateBucket,
+} from "./api";
 import { ICard } from "../components/Card/Card";
 
 import objectScan from "object-scan";
@@ -24,6 +30,7 @@ interface BoardState {
   saveCard: (card: ICard) => void;
   createCard: (bucket_id: string) => Promise<ICard | undefined>;
   createBucket: () => Promise<void>;
+  deleteCard: (cardId: string) => Promise<void>;
 }
 
 export enum ObjectType {
@@ -90,8 +97,8 @@ export const useBoardStore = create<BoardState>()((set, get) => ({
       set(() => ({ board: board }));
     }
   },
-  createCard: async (bucket_id) => {
-    let response = await createCard(bucket_id);
+  createCard: async (bucketId) => {
+    let response = await createCard(bucketId);
     if (!response.ok) return;
 
     let card: ICard = await response.json();
@@ -100,7 +107,7 @@ export const useBoardStore = create<BoardState>()((set, get) => ({
     const bucket = objectScan(["buckets[*]"], {
       rtn: "value",
       filterFn: ({ value }) => {
-        return value.id === bucket_id;
+        return value.id === bucketId;
       },
       abort: true,
     })(board) as IBucket | undefined;
@@ -131,5 +138,11 @@ export const useBoardStore = create<BoardState>()((set, get) => ({
 
     //TODO: Handle bad response
     throw new Error("Bucket was unable to be created");
+  },
+  deleteCard: async (cardId: string) => {
+    let board: IBoard = JSON.parse(JSON.stringify(get().board));
+    getCard(board, cardId, true);
+    await deleteCard(cardId);
+    set(() => ({ board: board }));
   },
 }));

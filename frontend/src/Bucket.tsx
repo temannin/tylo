@@ -66,7 +66,7 @@ export function Bucket({ data }: { data: IBucket }) {
             ? `${
                 dimensions.width /
                   useBoardStore.getState().board.buckets.length -
-                1
+                9
               }px`
             : 300,
         }}

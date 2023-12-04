@@ -4,7 +4,7 @@ import { Default, Switch } from "../global/Switch";
 import { useCard } from "./Card";
 
 export default function OpenCard() {
-  const { card, setCard, save, cancel } = useCard();
+  const { card, setCard, save, cancel, remove } = useCard();
 
   return (
     <>
@@ -71,7 +71,7 @@ export default function OpenCard() {
               </Default>
             </Switch>
           </div>
-          <div className="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+          <div className="items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
             <button
               onClick={save}
               data-modal-hide="defaultModal"
@@ -87,6 +87,14 @@ export default function OpenCard() {
               className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
             >
               Cancel
+            </button>
+            <button
+              onClick={remove}
+              data-modal-hide="defaultModal"
+              type="button"
+              className="float-right text-gray-500 bg-white hover:bg-red-300 hover:text-black hover:border-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+            >
+              Delete Card
             </button>
           </div>
         </div>

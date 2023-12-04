@@ -76,3 +76,12 @@ export async function createBucket(bucket: IBucket): Promise<Response> {
 
   return await fetch(`/api/buckets`, options);
 }
+
+export async function deleteCard(cardId: string) {
+  const options = {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  };
+
+  return await fetch(`/api/cards/${cardId}`, options);
+}

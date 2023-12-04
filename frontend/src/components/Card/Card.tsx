@@ -22,6 +22,7 @@ export interface CardContextType {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   save: () => void;
   cancel: () => void;
+  remove: () => void;
 }
 
 // Create a context for the Card
@@ -53,6 +54,11 @@ export function Card({ data }: { data: ICard }) {
     setIsOpen(false);
   };
 
+  const remove = () => {
+    useBoardStore.getState().deleteCard(card.id);
+    setIsOpen(false);
+  };
+
   const contextValue: CardContextType = {
     card,
     setCard,
@@ -60,6 +66,7 @@ export function Card({ data }: { data: ICard }) {
     setIsOpen,
     save,
     cancel,
+    remove,
   };
 
   useEffect(() => {
