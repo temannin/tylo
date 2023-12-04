@@ -115,7 +115,12 @@ export function Bucket({ data }: { data: IBucket }) {
           >
             <DroppableContainer id={content.id}>
               {content.cards.map((item) => {
-                return <Card key={item.id} data={item} />;
+                return (
+                  <Card
+                    key={item.id}
+                    data={{ ...item, ...{ bucket_id: content.id } }}
+                  />
+                );
               })}
             </DroppableContainer>
           </SortableContext>
