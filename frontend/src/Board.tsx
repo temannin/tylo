@@ -19,6 +19,7 @@ import { getCard, move } from "./utils/boardUtils";
 import { Bucket, IBucket } from "./Bucket";
 import useWindowDimensions from "./utils/hooks/useWindowDimensions";
 import { saveBoard, saveCard } from "./utils/api";
+import { useEffect } from "react";
 
 export interface IBoard {
   created_at: Date;
@@ -66,8 +67,11 @@ export function Board({ data }: { data: IBoard }) {
   );
 
   const { height } = useWindowDimensions();
-
   const activeItem: ICard = getCard(board, active);
+
+  useEffect(() => {
+    console.log("Buckets", data);
+  }, [data]);
 
   return (
     <>
@@ -95,7 +99,6 @@ export function Board({ data }: { data: IBoard }) {
             false,
             ["gparent", "value"]
           );
-          console.log("Firing");
           saveCard({ ...card, ...{ bucket_id: bucket.id } });
           saveBoard(useBoardStore.getState().board);
         }}
@@ -103,8 +106,8 @@ export function Board({ data }: { data: IBoard }) {
         <div
           style={{
             userSelect: "none",
-            display: "inline-flex",
-            height: height,
+            display: "flex",
+            height: height - 50, // -50 to accomodate the NavBar
             padding: 8,
           }}
         >

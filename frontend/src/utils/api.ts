@@ -1,4 +1,5 @@
 import { IBoard } from "../Board";
+import { IBucket } from "../Bucket";
 import { ICard } from "../components/Card/Card";
 
 export async function getBoard(id: number) {
@@ -7,6 +8,16 @@ export async function getBoard(id: number) {
 
 export async function getBucket(ident: string) {
   return await fetch(`/api/buckets/${ident}`);
+}
+
+export async function updateBucket(bucket: IBucket) {
+  const options = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(bucket),
+  };
+
+  return await fetch(`/api/buckets/${bucket.id}`, options);
 }
 
 export async function getCard(ident: string) {
@@ -54,4 +65,14 @@ export async function createCard(bucket_id: string): Promise<Response> {
   };
 
   return await fetch(`/api/cards`, options);
+}
+
+export async function createBucket(bucket: IBucket): Promise<Response> {
+  const options = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(bucket),
+  };
+
+  return await fetch(`/api/buckets`, options);
 }

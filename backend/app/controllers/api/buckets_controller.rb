@@ -18,7 +18,7 @@ class Api::BucketsController < ApplicationController
     @bucket = Bucket.new(bucket_params)
 
     if @bucket.save
-      render json: @bucket, status: :created, location: @bucket
+      render json: @bucket, status: :created
     else
       render json: @bucket.errors, status: :unprocessable_entity
     end
@@ -47,6 +47,6 @@ class Api::BucketsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def bucket_params
-    params.require(:bucket).permit(:name, :order)
+    params.require(:bucket).permit(:name, :order, :board_id)
   end
 end

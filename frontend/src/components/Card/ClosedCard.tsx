@@ -1,9 +1,11 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useCard } from "./Card";
+import { useBoardStore } from "../../utils/state";
 
 export default function ClosedCard() {
   const { card, setIsOpen } = useCard();
+  const showCardDetails = useBoardStore((state) => state.showCardDetails);
 
   const {
     isDragging,
@@ -21,6 +23,21 @@ export default function ClosedCard() {
     touchAction: "none",
   };
 
+  const abbreviateDescription = (
+    description?: string,
+    maxLength: number = 155
+  ) => {
+    if (!description) return "";
+    let text =
+      description.length > maxLength ? (
+        <>{description.slice(0, maxLength)}...</>
+      ) : (
+        description
+      );
+
+    return <p className="font-light text-xs">{text}</p>;
+  };
+
   return (
     <div
       style={style}
@@ -30,7 +47,12 @@ export default function ClosedCard() {
       className="w-full border-2 rounded shadow p-2 mb-2 cursor-pointer hover:bg-gray-200"
       onClick={() => setIsOpen(true)}
     >
-      <p>{card.title}</p>
+      <p className="font-semibold">{card.title}</p>
+      {showCardDetails ? (
+        <p className="font-light text-sm">
+          {abbreviateDescription(card.description)}
+        </p>
+      ) : null}
     </div>
   );
 }

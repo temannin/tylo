@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 
 import { useBoardStore } from "./utils/state";
 import { useShallow } from "zustand/react/shallow";
+import AddButton from "./AddButton";
+import NavBar from "./NavBar";
 
 export default function App() {
   const { boardId } = useParams();
@@ -25,8 +27,10 @@ export default function App() {
 
   return (
     <>
-      <div className={"ml-2 max-h-full overflow-y-hidden"}>
+      <div className={"max-h-full overflow-y-hidden"}>
+        <NavBar />
         {board ? <Board data={board}></Board> : null}
+        <AddButton />
       </div>
     </>
   );

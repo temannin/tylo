@@ -1,56 +1,87 @@
-import { useEffect, useState, useRef } from "react";
-import { Card, ICard } from "./components/Card/Card";
 import {
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import useWindowDimensions from "./utils/hooks/useWindowDimensions";
-import Button from "./components/global/Button";
-import { useBoardStore } from "./utils/state";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Card, ICard } from "./components/Card/Card";
+import Button from "./components/global/Button";
+import ClickableText from "./components/global/ClickableText";
+import useWindowDimensions from "./utils/hooks/useWindowDimensions";
+import { ObjectType, useBoardStore } from "./utils/state";
+import { useIsFirstRender } from "./utils/hooks/useIsFirstRender";
 
 export interface IBucket {
   id: string;
   name: string;
-  order: null;
+  order: number;
   created_at: Date;
   updated_at: Date;
-  board_id: number;
+  board_id: string;
   cards: ICard[];
 }
 
 export function Bucket({ data }: { data: IBucket }) {
-  const [cards, setCards] = useState<ICard[]>(data.cards);
   const params = useParams();
   const navigate = useNavigate();
+  const isFirstRender = useIsFirstRender();
+  const saveItemInBoard = useBoardStore((state) => state.saveItemInBoard);
+  const dimensions = useWindowDimensions();
 
+  const [content, setContent] = useState(data);
   const [createBucketButtonIsLoading, setCreateBucketButtonIsLoading] =
     useState(false);
 
   useEffect(() => {
-    setCards(data.cards);
-  }, [data.cards]);
+    setContent(data);
+  }, [data]);
 
-  const cardsById = cards.map((item) => {
+  useEffect(() => {
+    if (isFirstRender) return;
+    saveItemInBoard(ObjectType.BUCKET, content.id, content);
+  }, [content.name]);
+
+  const cardsById = content.cards.map((item) => {
     return item.id;
   });
 
   const createCard = async () => {
     setCreateBucketButtonIsLoading(true);
-    let card = await useBoardStore.getState().createCard(data.id);
+    let card = await useBoardStore.getState().createCard(content.id);
     if (!card) return;
     let url = `/boards/${params.boardId}/cards/${card.id}`;
     navigate(url);
     setCreateBucketButtonIsLoading(false);
   };
 
+  const expand = useBoardStore((state) => state.expand);
+
   return (
     <>
-      <div className={"w-[300px] h-full border-2 rounded ml-2 bg-gray-200"}>
+      <div
+        style={{
+          width: expand
+            ? `${
+                dimensions.width /
+                  useBoardStore.getState().board.buckets.length -
+                1
+              }px`
+            : 300,
+        }}
+        className={"h-full border-2 rounded mr-2 bg-gray-200"}
+      >
         <div className="ml-2 mt-2 grid grid-cols-12 gap-0">
           <div className={"mt-2 font-bold col-span-9"}>
-            <h1>{data.name}</h1>
+            <ClickableText
+              value={content.name}
+              submitOnEnter
+              onChange={(e) =>
+                setContent((prevState) => {
+                  return { ...prevState, ...{ name: e } };
+                })
+              }
+            ></ClickableText>
           </div>
           <div className={"font-bold col-span-3"}>
             <Button
@@ -81,8 +112,8 @@ export function Bucket({ data }: { data: IBucket }) {
             strategy={verticalListSortingStrategy}
             items={cardsById}
           >
-            <DroppableContainer id={data.id}>
-              {cards.map((item) => {
+            <DroppableContainer id={content.id}>
+              {content.cards.map((item) => {
                 return <Card key={item.id} data={item} />;
               })}
             </DroppableContainer>
