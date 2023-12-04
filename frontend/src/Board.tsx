@@ -76,6 +76,7 @@ export function Board({ data }: { data: IBoard }) {
   return (
     <>
       <DndContext
+        autoScroll={{ acceleration: 0.5 }}
         measuring={{
           droppable: {
             strategy: MeasuringStrategy.Always,

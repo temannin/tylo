@@ -61,6 +61,7 @@ export function Bucket({ data }: { data: IBucket }) {
     <>
       <div
         style={{
+          flexShrink: 0,
           width: expand
             ? `${
                 dimensions.width /

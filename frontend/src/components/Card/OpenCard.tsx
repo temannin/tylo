@@ -21,7 +21,7 @@ export default function OpenCard() {
           left: "50%",
           transform: "translate(-50%, -50%)",
         }}
-        className=" z-[2] m-auto sm:w-12/12 md:w-10/12 xl:w-8/12 max-h-full absolute left-0 right-0"
+        className=" z-[2] w-[96%] sm:w-11/12 md:w-9/12 xl:w-8/12 max-h-full absolute left-0 right-0"
       >
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
           <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
