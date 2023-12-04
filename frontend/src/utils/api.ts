@@ -30,17 +30,11 @@ export async function saveBoard(board: IBoard) {
     for (let cardIndex = 0; cardIndex < element.cards.length; cardIndex++) {
       const card = element.cards[cardIndex];
       if (card.order !== cardIndex) {
-        debugger;
         card.order = cardIndex;
         saveCard(card);
       }
     }
   }
-
-  return await fetch(`/api/boards/${board.id}`, {
-    method: "PUT",
-    body: JSON.stringify(board),
-  });
 }
 
 export async function saveCard(card: ICard) {
