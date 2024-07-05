@@ -27,3 +27,5 @@ test:
 production:
   <<: *default
   database: tylo_prod
+  host: db
+  port: 5432

@@ -1,0 +1,32 @@
+services:
+  web:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    networks:
+      - backend-db
+
+  backend:
+    build: ./backend
+    networks:
+      - backend-db
+    environment:
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+
+  db:
+    image: postgres:16
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+    networks:
+      - backend-db
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+volumes:
+  pgdata:
+
+networks:
+  backend-db:
